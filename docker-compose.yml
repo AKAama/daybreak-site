@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: daybreak
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-daybreak}
+      POSTGRES_DB: daybreak
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U daybreak"]
+      interval: 5s
+      retries: 10
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URI: postgresql://daybreak:${POSTGRES_PASSWORD:-daybreak}@db:5432/daybreak
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?Set PAYLOAD_SECRET}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    volumes:
+      - uploads:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  pgdata:
+  uploads:

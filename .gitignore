@@ -1,0 +1,27 @@
+# 依赖与构建产物
+node_modules
+.next
+out
+dist
+*.tsbuildinfo
+
+# 环境变量（真实密钥只放 .env，模板放 .env.example）
+.env
+.env.*
+!.env.example
+
+# 本地上传的媒体文件（生产用对象存储或持久卷）
+media
+
+# AI 概念图仅作风格参考，不进仓库（PRD 3.1）
+design-reference/
+
+# 自动生成
+next-env.d.ts
+
+# 编辑器与系统
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+.eslintcache

@@ -1,0 +1,11 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 110,
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "options": { "printWidth": 100 }
+    }
+  ]
+}
