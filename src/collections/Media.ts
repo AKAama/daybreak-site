@@ -9,8 +9,7 @@ import { onlyAdmin, publicRead } from '../lib/access'
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const isSame = (a: unknown, b: unknown) => String(a) === String(b)
-const idOf = (value: unknown) =>
-  value && typeof value === 'object' ? (value as { id?: unknown }).id : value
+const idOf = (value: unknown) => (value && typeof value === 'object' ? (value as { id?: unknown }).id : value)
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -38,15 +37,18 @@ export const Media: CollectionConfig = {
         for (const album of albums.docs) {
           const inAlbum =
             isSame(idOf(album.cover), id) ||
-            (album.photos || []).some(photo => isSame(idOf(photo.image), id))
+            (album.photos || []).some((photo) => isSame(idOf(photo.image), id))
           if (inAlbum) usedBy.push(`相册「${album.title}」`)
         }
 
         for (const slug of ['homepage', 'site-settings'] as const) {
-          const doc = await req.payload.findGlobal({ slug, req }) as Record<string, unknown>
+          const doc = (await req.payload.findGlobal({
+            slug,
+            req,
+          })) as unknown as Record<string, unknown>
           const label = slug === 'homepage' ? '首页' : '站点设置'
           const keys = slug === 'homepage' ? ['heroImage', 'heroVideo'] : ['logo', 'seoDefaultImage']
-          if (keys.some(key => isSame(idOf(doc[key]), id))) usedBy.push(`${label}配置`)
+          if (keys.some((key) => isSame(idOf(doc[key]), id))) usedBy.push(`${label}配置`)
         }
 
         if (usedBy.length)

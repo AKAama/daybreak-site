@@ -1,13 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { APIError } from 'payload'
 import { onlyAdmin, readPublished } from '../lib/access'
-
-const slugify = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
-    .replace(/^-+|-+$/g, '')
+import { slugify } from '../lib/slug'
 
 export const Players: CollectionConfig = {
   slug: 'players',
@@ -27,9 +21,9 @@ export const Players: CollectionConfig = {
     beforeValidate: [
       ({ data, originalDoc }) => {
         if (data?.slug || originalDoc?.slug) return data
-        const source = data?.englishName || data?.name
-        if (!source) throw new APIError('请填写姓名或英文名，用于生成访问链接')
-        return { ...data, slug: slugify(source) }
+        const slug = slugify(data?.englishName || data?.name)
+        if (!slug) throw new APIError('请填写英文名（字母或数字），用于生成访问链接', 400)
+        return { ...data, slug }
       },
     ],
   },
@@ -41,13 +35,13 @@ export const Players: CollectionConfig = {
       type: 'text',
       unique: true,
       index: true,
-      admin: { description: '留空时按英文名或姓名自动生成' },
+      admin: { description: '留空时按英文名生成，仅支持字母和数字' },
     },
     { name: 'number', type: 'number', required: true, min: 0, max: 99 },
     {
       name: 'position',
       type: 'select',
-      options: ['PG', 'SG', 'SF', 'PF', 'C'].map(value => ({ label: value, value })),
+      options: ['PG', 'SG', 'SF', 'PF', 'C'].map((value) => ({ label: value, value })),
     },
     { name: 'portrait', type: 'upload', relationTo: 'media' },
     { name: 'avatar', type: 'upload', relationTo: 'media' },

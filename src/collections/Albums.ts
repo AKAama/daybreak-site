@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { APIError } from 'payload'
 import { onlyAdmin, readPublished } from '../lib/access'
+import { dateSlug, slugify } from '../lib/slug'
 
 const pick = (data: Record<string, unknown>, originalDoc: Record<string, unknown>, key: string) =>
   key in data ? data[key] : originalDoc?.[key]
@@ -19,6 +20,14 @@ export const Albums: CollectionConfig = {
     delete: onlyAdmin,
   },
   hooks: {
+    // 纯中文标题转不出 ASCII slug，退回按活动日期命名；两者都没有时前台用文档 ID 兜底
+    beforeValidate: [
+      ({ data, originalDoc }) => {
+        if (data?.slug || originalDoc?.slug) return data
+        const slug = slugify(data?.title) || dateSlug(data?.eventDate)
+        return slug ? { ...data, slug } : data
+      },
+    ],
     // PRD 5.1 选定「空相册不允许发布」，前台因此不需要空相册分支
     beforeChange: [
       ({ data, originalDoc }) => {
@@ -27,15 +36,20 @@ export const Albums: CollectionConfig = {
         const cover = pick(data, originalDoc, 'cover')
         const photos = pick(data, originalDoc, 'photos')
         if (!cover) throw new APIError('发布前请先设置封面', 400)
-        if (!Array.isArray(photos) || photos.length === 0)
-          throw new APIError('发布前请至少添加一张照片', 400)
+        if (!Array.isArray(photos) || photos.length === 0) throw new APIError('发布前请至少添加一张照片', 400)
         return data
       },
     ],
   },
   fields: [
     { name: 'title', type: 'text', required: true },
-    { name: 'slug', type: 'text', unique: true, index: true },
+    {
+      name: 'slug',
+      type: 'text',
+      unique: true,
+      index: true,
+      admin: { description: '留空时按标题英文/数字生成，取不到则用活动日期' },
+    },
     { name: 'eventDate', type: 'date' },
     { name: 'description', type: 'textarea' },
     { name: 'cover', type: 'upload', relationTo: 'media' },

@@ -2,6 +2,7 @@ import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
+import sharp from 'sharp'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
@@ -28,6 +29,8 @@ if (!secret) {
 export default buildConfig({
   secret,
   serverURL: process.env.NEXT_PUBLIC_SITE_URL,
+  // 仅安装 sharp 不够，Payload 3.91 会检查 config.sharp 决定是否生成 imageSizes
+  sharp,
   admin: {
     user: Users.slug,
   },
@@ -35,7 +38,12 @@ export default buildConfig({
   collections: [Users, Media, Players, Albums],
   globals: [Homepage, SiteSettings],
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URI || 'postgresql://daybreak:daybreak@localhost:5432/daybreak' },
+    pool: {
+      connectionString: process.env.DATABASE_URI || 'postgresql://daybreak:daybreak@localhost:5432/daybreak',
+    },
+    migrationDir: path.resolve(dirname, 'migrations'),
+    // 生产只认迁移文件，避免 push 模式静默改表（PRD 第 9 节：迁移纳入版本管理）
+    push: process.env.PAYLOAD_DB_PUSH === 'true',
   }),
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   plugins: process.env.S3_BUCKET

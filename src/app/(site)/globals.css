@@ -1,2 +1,143 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap');
-:root{--bg:#101010;--orange:#f4511e;--paper:#f1eee7;--muted:#999}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--paper);font-family:Arial,'PingFang SC','Microsoft Yahei',sans-serif}a{color:inherit;text-decoration:none}button{font:inherit}.nav{height:84px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:absolute;z-index:10;left:0;right:0;background:linear-gradient(#0009,transparent)}.brand{display:flex;flex-direction:column;line-height:1}.brand span{font-weight:900;font-size:27px;letter-spacing:-2px;font-style:italic}.brand b{font-family:'Barlow Condensed';font-style:italic;font-size:19px;color:var(--orange)}.nav nav{display:flex;gap:34px;font-size:13px;font-weight:700}.nav nav a:hover{color:var(--orange)}.nav-cta,.btn{background:var(--orange);color:#111;font-weight:900;padding:15px 25px;display:inline-flex;gap:20px;align-items:center}.hero{min-height:760px;height:95vh;position:relative;display:flex;align-items:center;overflow:hidden;background:radial-gradient(ellipse at 72% 44%,#564238 0%,#211c1b 31%,#080808 75%)}.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#000d,transparent 70%),linear-gradient(0deg,#101010,transparent 30%);pointer-events:none}.hero-photo{position:absolute;inset:0;background-size:cover;background-position:center 40%;filter:grayscale(1) contrast(1.1);opacity:.65}.hero-content{position:relative;z-index:2;margin:7% 6% 0}.eyebrow,.section-num{color:var(--orange);font-family:'Barlow Condensed';font-style:italic;font-size:24px;font-weight:800}.hero h1{font-size:clamp(76px,13vw,205px);line-height:.87;letter-spacing:-.07em;font-weight:1000;font-style:italic;margin:20px 0 5px;text-shadow:5px 6px #0007}.hero h1 em{display:block;font-family:'Barlow Condensed';font-style:italic;letter-spacing:-.04em;color:var(--orange);font-size:.72em}.hero p{letter-spacing:.6em;font-size:18px;margin:30px 0}.hero .sub{font-family:'Barlow Condensed';font-size:13px;letter-spacing:.6em;color:#bbb}.hero-side{position:absolute;z-index:2;right:6%;bottom:12%;writing-mode:vertical-rl;letter-spacing:.3em;font-size:12px;color:#bbb}.section{padding:90px 6%}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:30px}.section h2,.page-title{font-size:clamp(52px,7vw,108px);font-style:italic;font-weight:1000;letter-spacing:-.07em;line-height:1;margin:5px 0}.section-desc{color:#bbb;font-size:13px;letter-spacing:.12em}.text-link{font-size:13px;font-weight:700;border-bottom:1px solid var(--orange);padding-bottom:8px}.roster{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.player-card{height:370px;background:#272727;position:relative;overflow:hidden;display:block;border:1px solid #444}.player-card img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);transition:transform .5s,filter .5s}.player-card:hover img{filter:grayscale(0);transform:scale(1.06)}.player-card:after{content:'';position:absolute;inset:40% 0 0;background:linear-gradient(transparent,#000e)}.player-card .info{position:absolute;z-index:2;bottom:16px;left:18px}.number{font:900 44px 'Barlow Condensed';font-style:italic}.info h3{margin:0;font-size:22px}.info p{color:var(--orange);margin:5px 0;font-size:12px;font-weight:bold}.placeholder{height:100%;display:grid;place-items:center;font:900 90px 'Barlow Condensed';color:#4b4b4b;background:linear-gradient(135deg,#333,#161616)}.player-card:nth-child(3n+1) .placeholder{background:linear-gradient(140deg,#562b1c,#171717)}.gallery-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-auto-rows:240px;gap:10px}.gallery-tile{background:#252525;position:relative;overflow:hidden;display:flex;align-items:end;padding:20px}.gallery-tile:first-child{grid-row:span 2}.gallery-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.5);transition:transform .4s}.gallery-tile:hover img{transform:scale(1.05)}.gallery-tile:after{content:'';position:absolute;inset:30% 0 0;background:linear-gradient(transparent,#000c)}.gallery-tile span{position:relative;z-index:1;font-weight:800;font-size:23px}.gallery-tile.empty{background:repeating-linear-gradient(135deg,#1c1c1c,#1c1c1c 20px,#232323 20px,#232323 40px)}.about-strip{padding:95px 6%;background:linear-gradient(115deg,#2b150e,#101010 65%);display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.about-strip h2{font-size:clamp(58px,8vw,130px);font-style:italic;line-height:.9;margin:0}.about-strip p{line-height:2;color:#ccc}.footer{border-top:1px solid #333;padding:60px 6% 35px}.footer strong{font:900 80px 'Barlow Condensed';font-style:italic}.footer strong span{font-size:20px;color:var(--orange)}.footer p,.footer small{color:#999}.page{padding:150px 6% 90px;min-height:80vh}.page-title{margin:20px 0 45px}.detail{display:grid;grid-template-columns:1fr 1fr;gap:50px}.detail img{width:100%;max-height:650px;object-fit:cover}.detail h1{font-size:clamp(60px,8vw,130px);margin:0}.detail p{line-height:1.9;color:#bbb}.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.photo-grid img{width:100%;height:300px;object-fit:cover}.empty-note{color:#aaa;padding:55px 0;font-size:15px}.tag{color:var(--orange);font-weight:900}.back{color:var(--orange);font-size:13px}.section:nth-of-type(odd){background:#141414}@media(max-width:900px){.nav{height:70px}.nav nav{gap:12px;font-size:11px}.nav-cta{display:none}.hero{min-height:640px;height:85vh}.hero-content{margin-top:70px}.roster{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.player-card{min-width:220px;scroll-snap-align:start}.gallery-grid{grid-template-columns:1fr 1fr;grid-auto-rows:190px}.gallery-tile:first-child{grid-column:span 2;grid-row:span 1}.about-strip{grid-template-columns:1fr}.detail{grid-template-columns:1fr}.photo-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.nav{padding:0 5%}.nav nav{gap:9px}.nav nav a{font-size:10px}.nav nav a:last-child{display:none}.brand span{font-size:19px}.brand b{font-size:14px}.section{padding:65px 5%}.hero h1{font-size:20vw}.hero p{font-size:13px;letter-spacing:.35em}.section h2{font-size:55px}.gallery-grid{grid-template-columns:1fr 1fr}.gallery-tile span{font-size:17px}.photo-grid{grid-template-columns:1fr}.page{padding:115px 5% 70px}}
+@import 'tailwindcss';
+
+/* PRD 3.1 视觉 Token */
+@theme {
+  --color-ink: #101010;
+  --color-blaze: #f4511e;
+  --color-blaze-bright: #ff6a38;
+  --color-paper: #f1eee7;
+  --color-concrete: #777777;
+  --color-surface: #1b1b1b;
+  --color-card: #272727;
+  --color-line: #333333;
+  --color-mute: #bbbbbb;
+
+  --font-display: var(--font-barlow), 'Arial Narrow', Impact, sans-serif;
+  --font-sans: Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+
+  /* 沿用原稿的三档断点：小屏 / 平板 / 桌面 */
+  --breakpoint-sm: 520px;
+  --breakpoint-md: 700px;
+  --breakpoint-lg: 900px;
+  --breakpoint-xl: 1200px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink font-sans text-paper antialiased;
+  }
+
+  ::selection {
+    @apply bg-blaze text-ink;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-blaze;
+  }
+
+  /* 顶部导航为绝对定位，锚点跳转时留出避让距离 */
+  [id] {
+    scroll-margin-top: 100px;
+  }
+}
+
+@layer components {
+  /* 大号展示标题：斜体 Condensed + 紧字距 */
+  .display {
+    @apply font-display font-black italic leading-[0.88] tracking-[-0.05em];
+  }
+
+  .eyebrow {
+    @apply font-display text-xl font-extrabold italic text-blaze sm:text-2xl;
+  }
+
+  .cta {
+    @apply inline-flex items-center gap-4 bg-blaze px-6 py-3.5 text-[15px] font-black text-[#111] transition-colors hover:bg-blaze-bright;
+  }
+
+  .text-link {
+    @apply inline-block border-b border-blaze pb-2 text-[13px] font-bold tracking-wide text-paper transition-colors hover:text-blaze;
+  }
+
+  /* 图片底部压暗，保证叠字在任意照片上都有足够对比度 */
+  .photo-scrim {
+    background-image: linear-gradient(to top, rgb(0 0 0 / 0.92), rgb(0 0 0 / 0) 58%);
+  }
+
+  .hero-scrim {
+    background-image:
+      linear-gradient(90deg, rgb(0 0 0 / 0.85), rgb(0 0 0 / 0) 70%),
+      linear-gradient(0deg, #101010, rgb(16 16 16 / 0) 32%);
+  }
+
+  /* 黑白胶片基调。触屏设备默认即呈现彩色，不依赖 hover 才能看清内容 */
+  .duotone {
+    filter: grayscale(1) contrast(1.08);
+    transition:
+      filter 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  /* 相册封面保留部分色彩，避免整站一片灰 */
+  .duotone-soft {
+    filter: grayscale(0.55) contrast(1.05);
+    transition:
+      filter 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  .stripes {
+    background-image: repeating-linear-gradient(135deg, #1c1c1c 0 20px, #232323 20px 40px);
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+  }
+
+  .no-bar {
+    scrollbar-width: none;
+  }
+
+  .no-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 胶片颗粒，仅用于 Hero 与 About 区块 */
+  .grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.12;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@media (hover: hover) {
+  .tile:hover .duotone,
+  .tile:hover .duotone-soft {
+    filter: grayscale(0) contrast(1.02);
+    transform: scale(1.06);
+  }
+}
+
+/* FR-09：动效为渐进增强，用户要求减少动态时全部收敛 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

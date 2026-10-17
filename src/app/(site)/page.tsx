@@ -1,4 +1,126 @@
 import Link from 'next/link'
-import {homepageData,mediaUrl} from '@/lib/data'
-export const dynamic='force-dynamic'
-export default async function Home(){const {home,players,albums}=await homepageData();const selected=(home as any)?.featuredPlayers?.length?(home as any).featuredPlayers:players.filter((p:any)=>p.featured).length?players.filter((p:any)=>p.featured):players;const featured=(home as any)?.featuredAlbums?.length?(home as any).featuredAlbums:albums.filter((a:any)=>a.featured).length?albums.filter((a:any)=>a.featured):albums;const hero=mediaUrl((home as any)?.heroImage);return <main><section className="hero">{hero&&<div className="hero-photo" style={{backgroundImage:`url(${hero})`}}/>}<div className="hero-content"><span className="eyebrow">NANJING STREETBALL CREW / EST. 2026</span><h1>南京破晓<em>DAYBREAK</em></h1><p>{(home as any)?.slogan||'不止于篮球'}</p><div className="sub">MORE THAN BASKETBALL.</div><br/><br/><Link className="btn" href="/about">了解我们 ↗</Link></div><div className="hero-side">NANJING / PEOPLE / BASKETBALL / CULTURE</div></section><section className="section"><div className="section-head"><div><span className="section-num">01 / ROSTER</span><h2>球员阵容</h2><div className="section-desc">不同的位置，同一个破晓。 DIFFERENT POSITIONS. SAME DAYBREAK.</div></div><Link className="text-link" href="/players">查看全部球员 ↗</Link></div><div className="roster">{selected.length?selected.slice(0,5).map((p:any)=><Link className="player-card" href={`/players/${p.slug}`} key={p.id}>{mediaUrl(p.portrait)?<img src={mediaUrl(p.portrait)} alt={p.name}/>:<div className="placeholder">{String(p.number).padStart(2,'0')}</div>}<div className="info"><div className="number">#{p.number}</div><h3>{p.name}</h3><p>{p.englishName} · {p.position}</p></div></Link>):Array.from({length:5},(_,i)=><div className="player-card" key={i}><div className="placeholder">{['01','07','11','23','77'][i]}</div><div className="info"><div className="number">#{['01','07','11','23','77'][i]}</div><h3>COMING SOON</h3><p>DAYBREAK CREW</p></div></div>)}</div></section><section className="section"><div className="section-head"><div><span className="section-num">02 / CULTURE</span><h2>球队风采</h2><div className="section-desc">比赛 / 训练 / 街头 / 生活　GAMES / PRACTICE / STREET / LIFE</div></div><Link className="text-link" href="/gallery">查看全部相册 ↗</Link></div><div className="gallery-grid">{featured.length?featured.slice(0,5).map((a:any)=><Link className="gallery-tile" href={`/gallery/${a.slug}`} key={a.id}>{mediaUrl(a.cover)&&<img src={mediaUrl(a.cover)} alt={a.title}/>}<span>{a.title} ↗</span></Link>):Array.from({length:5},(_,i)=><div className="gallery-tile empty" key={i}><span>{['THE GAME','OUR CITY','STREET LIFE','PRACTICE','BEHIND THE SCENES'][i]}</span></div>)}</div></section><section className="about-strip"><div><span className="section-num">03 / ABOUT</span><h2>关于<br/>我们<span style={{color:'var(--orange)'}}>.</span></h2></div><div><p>{(home as any)?.aboutText||'从南京的街头出发，用篮球记录属于我们的故事。'}</p><Link className="text-link" href="/about">了解我们的故事 ↗</Link></div></section></main>}
+import { AlbumTile, AlbumTilePlaceholder } from '@/components/AlbumTile'
+import { HeroMedia } from '@/components/HeroMedia'
+import { PlayerCard, PlayerCardPlaceholder } from '@/components/PlayerCard'
+import { getSiteData, pickFeatured } from '@/lib/data'
+import { buildMetadata, DEFAULT_DESCRIPTION } from '@/lib/seo'
+
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata() {
+  const { settings } = await getSiteData()
+  return buildMetadata({
+    description: DEFAULT_DESCRIPTION,
+    pathname: '/',
+    siteName: settings?.siteTitle,
+    image: settings?.seoDefaultImage,
+  })
+}
+
+const GALLERY_PLACEHOLDERS = ['THE GAME', 'OUR CITY', 'STREET LIFE', 'PRACTICE', 'BEHIND THE SCENES']
+
+export default async function Home() {
+  const { home, players, albums } = await getSiteData()
+  const roster = pickFeatured(home?.featuredPlayers, players).slice(0, 5)
+  const culture = pickFeatured(home?.featuredAlbums, albums).slice(0, 5)
+
+  return (
+    <>
+      <section className="grain relative flex h-[85vh] min-h-[640px] items-center overflow-hidden lg:h-[95vh] lg:min-h-[760px]">
+        <HeroMedia image={home?.heroImage ?? null} video={home?.heroVideo ?? null} />
+        <div className="relative z-[2] mx-[6%] mt-[70px] lg:mt-0">
+          <span className="eyebrow">NANJING STREETBALL CREW</span>
+          <h1 className="display mt-4 text-[20vw] [text-shadow:5px_6px_rgba(0,0,0,0.45)] sm:text-[15vw] lg:text-[clamp(76px,13vw,205px)]">
+            南京破晓
+            <em className="block text-[0.72em] text-blaze">DAYBREAK</em>
+          </h1>
+          <p className="my-7 text-[13px] tracking-[0.35em] sm:text-lg sm:tracking-[0.6em]">
+            {home?.slogan || '不止于篮球'}
+          </p>
+          <div className="font-display text-xs tracking-[0.5em] text-mute">MORE THAN BASKETBALL.</div>
+          <Link href="/about" className="cta mt-9">
+            了解我们 ↗
+          </Link>
+        </div>
+        <div className="vertical-text absolute bottom-[12%] right-[6%] z-[2] hidden text-xs tracking-[0.3em] text-mute lg:block">
+          NANJING / PEOPLE / BASKETBALL / CULTURE
+        </div>
+        <a
+          href="#roster"
+          className="absolute bottom-6 left-1/2 z-[2] hidden -translate-x-1/2 font-display text-xs font-bold tracking-[0.25em] text-mute transition-colors hover:text-blaze lg:block"
+        >
+          SCROLL ↓
+        </a>
+      </section>
+
+      <section id="roster" className="bg-surface px-[6%] py-16 lg:py-[90px]">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <span className="eyebrow">01 / ROSTER</span>
+            <h2 className="display mt-1 text-[clamp(52px,7vw,108px)]">球员阵容</h2>
+            <p className="mt-2 text-xs tracking-[0.12em] text-mute">
+              不同的位置，同一个破晓。 DIFFERENT POSITIONS. SAME DAYBREAK.
+            </p>
+          </div>
+          <Link className="text-link" href="/players">
+            查看全部球员 ↗
+          </Link>
+        </div>
+
+        {/* 桌面 5 列，移动端横向滑动（PRD 4.3） */}
+        <div className="no-bar -mx-[6%] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[6%] pb-3 lg:mx-0 lg:grid lg:grid-cols-5 lg:overflow-visible lg:px-0">
+          {roster.length
+            ? roster.map((player, index) => (
+                <PlayerCard key={player.id} player={player} variant="rail" priority={index < 2} />
+              ))
+            : Array.from({ length: 5 }, (_, index) => <PlayerCardPlaceholder key={index} index={index} />)}
+        </div>
+      </section>
+
+      <section id="culture" className="px-[6%] py-16 lg:py-[90px]">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <span className="eyebrow">02 / CULTURE</span>
+            <h2 className="display mt-1 text-[clamp(52px,7vw,108px)]">球队风采</h2>
+            <p className="mt-2 text-xs tracking-[0.12em] text-mute">
+              比赛 / 训练 / 街头 / 生活　GAMES / PRACTICE / STREET / LIFE
+            </p>
+          </div>
+          <Link className="text-link" href="/gallery">
+            查看全部相册 ↗
+          </Link>
+        </div>
+
+        {/* 策展式拼贴：首图放大，行高固定以避免加载时布局跳动（PRD 4.4） */}
+        <div className="grid auto-rows-[170px] grid-cols-2 gap-2.5 sm:auto-rows-[200px] lg:auto-rows-[240px] lg:grid-cols-[2fr_1fr_1fr]">
+          {culture.length
+            ? culture.map((album, index) => (
+                <AlbumTile key={album.id} album={album} large={index === 0} priority={index === 0} />
+              ))
+            : GALLERY_PLACEHOLDERS.map((label, index) => (
+                <AlbumTilePlaceholder key={label} label={label} large={index === 0} />
+              ))}
+        </div>
+      </section>
+
+      <section className="grain relative grid gap-8 overflow-hidden bg-[linear-gradient(115deg,#2b150e,#101010_65%)] px-[6%] py-20 lg:grid-cols-2 lg:py-[95px]">
+        <div className="relative z-[2]">
+          <span className="eyebrow">03 / ABOUT</span>
+          <h2 className="display mt-1 text-[clamp(58px,8vw,130px)]">
+            关于
+            <br />
+            我们<span className="text-blaze">.</span>
+          </h2>
+        </div>
+        <div className="relative z-[2] self-center">
+          <p className="leading-8 text-[#ccc]">
+            {home?.aboutText || '从南京的街头出发，用篮球记录属于我们的故事。'}
+          </p>
+          <Link className="text-link mt-7" href="/about">
+            了解我们的故事 ↗
+          </Link>
+        </div>
+      </section>
+    </>
+  )
+}

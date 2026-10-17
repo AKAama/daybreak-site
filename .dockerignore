@@ -1,0 +1,10 @@
+# 构建上下文里不能出现本地凭证与产物
+.env
+.env.*
+!.env.example
+node_modules
+.next
+media
+.git
+design-reference
+tsconfig.tsbuildinfo

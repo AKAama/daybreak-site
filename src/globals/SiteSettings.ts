@@ -29,9 +29,10 @@ export const SiteSettings: GlobalConfig = {
           name: 'platform',
           type: 'select',
           required: true,
-          options: ['instagram', 'douyin', 'weibo', 'bilibili', 'xiaohongshu', 'wechat'].map(
-            value => ({ label: value, value }),
-          ),
+          options: ['instagram', 'douyin', 'weibo', 'bilibili', 'xiaohongshu', 'wechat'].map((value) => ({
+            label: value,
+            value,
+          })),
         },
         { name: 'label', type: 'text', admin: { description: '展示文案，如 @daybreak' } },
         { name: 'url', type: 'text', required: true },

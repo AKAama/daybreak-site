@@ -4,3 +4,6 @@ out
 media
 package-lock.json
 src/payload-types.ts
+# Payload 生成的 drizzle 快照与迁移，保持原样便于 diff
+src/migrations
+design-reference

@@ -1,5 +1,39 @@
 import type { ReactNode } from 'react'
-import Link from 'next/link'
-import '../globals.css'
-export const metadata={title:'南京破晓 DAYBREAK | Streetball Crew',description:'南京破晓街头篮球厂牌 — 不止于篮球。'}
-export default function SiteLayout({children}:{children:ReactNode}){return <><header className="nav"><Link className="brand" href="/"><span>南京破晓</span><b>DAYBREAK</b></Link><nav><Link href="/">首页</Link><Link href="/players">球员阵容</Link><Link href="/gallery">球队风采</Link><Link href="/about">关于我们</Link></nav><Link className="nav-cta" href="/gallery">EXPLORE ↗</Link></header>{children}<footer className="footer"><strong>DAYBREAK<span>®</span></strong><p>NANJING STREETBALL CULTURE · 不止于篮球</p><small>© {new Date().getFullYear()} 南京破晓</small></footer></>}
+import { SiteFooter } from '@/components/SiteFooter'
+import { SiteHeader } from '@/components/SiteHeader'
+import { getSiteData } from '@/lib/data'
+import { barlow } from '@/lib/fonts'
+import { FALLBACK_LOGO, mediaUrl } from '@/lib/media'
+import { rootMetadata } from '@/lib/seo'
+import './globals.css'
+
+/** 后台内容保存后前台即时可见，无需重新构建部署（PRD 5.1） */
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata() {
+  const { settings } = await getSiteData()
+  return rootMetadata(settings)
+}
+
+export default async function SiteLayout({ children }: { children: ReactNode }) {
+  const { settings, home } = await getSiteData()
+
+  return (
+    <html lang="zh-CN" id="top" className={barlow.variable}>
+      <body className="bg-ink text-paper">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-60 focus:bg-blaze focus:px-4 focus:py-2 focus:font-bold focus:text-ink"
+        >
+          跳到主要内容
+        </a>
+        <SiteHeader
+          logoSrc={mediaUrl(settings?.logo) || FALLBACK_LOGO}
+          siteName={settings?.siteTitle || '南京破晓 DAYBREAK'}
+        />
+        <main id="main">{children}</main>
+        <SiteFooter settings={settings} slogan={home?.slogan || '不止于篮球'} />
+      </body>
+    </html>
+  )
+}

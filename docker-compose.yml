@@ -9,14 +9,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U daybreak"]
+      test: ['CMD-SHELL', 'pg_isready -U daybreak']
       interval: 5s
       retries: 10
   web:
     build: .
     restart: unless-stopped
+    # 生产禁用 push 模式，表结构只认迁移文件；启动前先补迁移再对外服务
+    command: sh -c "npx payload migrate && npm run start -- -H 0.0.0.0"
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       DATABASE_URI: postgresql://daybreak:${POSTGRES_PASSWORD:-daybreak}@db:5432/daybreak
       PAYLOAD_SECRET: ${PAYLOAD_SECRET:?Set PAYLOAD_SECRET}
