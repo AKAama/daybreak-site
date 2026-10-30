@@ -30,6 +30,12 @@ export default async function PlayerPage({ params }: Props) {
   const { player, albums } = result
   const portrait = mediaUrl(player.portrait, 'card')
   const meta = [player.englishName, player.position].filter(Boolean).join(' / ')
+  const stats = [
+    player.height ? `${player.height} CM` : null,
+    player.weight ? `${player.weight} KG` : null,
+  ]
+    .filter(Boolean)
+    .join(' / ')
 
   return (
     <div className="min-h-[80vh] px-[6%] pb-20 pt-[120px] lg:pt-[150px]">
@@ -59,7 +65,13 @@ export default async function PlayerPage({ params }: Props) {
           {meta && (
             <p className="mt-3 font-display text-2xl font-bold italic tracking-wide text-blaze">{meta}</p>
           )}
-          <p className="mt-7 leading-8 text-mute">{player.bio || 'DAYBREAK CREW — 不止于篮球。'}</p>
+          {stats && <p className="mt-2 text-sm font-bold tracking-[0.14em] text-concrete">{stats}</p>}
+          {player.motto && (
+            <p className="mt-7 border-l-2 border-blaze pl-4 font-display text-xl font-bold italic leading-relaxed">
+              “{player.motto}”
+            </p>
+          )}
+          <p className="mt-7 whitespace-pre-line leading-8 text-mute">{player.bio || 'DAYBREAK CREW — 不止于篮球。'}</p>
         </div>
       </div>
 

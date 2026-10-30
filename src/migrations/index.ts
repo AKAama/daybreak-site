@@ -1,5 +1,6 @@
 import * as migration_20261017_074654 from './20261017_074654';
 import * as migration_20261020_092736_add_media_objectkey from './20261020_092736_add_media_objectkey';
+import * as migration_20261030_061238_add_player_physical_fields from './20261030_061238_add_player_physical_fields';
 
 export const migrations = [
   {
@@ -10,6 +11,11 @@ export const migrations = [
   {
     up: migration_20261020_092736_add_media_objectkey.up,
     down: migration_20261020_092736_add_media_objectkey.down,
-    name: '20261020_092736_add_media_objectkey'
+    name: '20261020_092736_add_media_objectkey',
+  },
+  {
+    up: migration_20261030_061238_add_player_physical_fields.up,
+    down: migration_20261030_061238_add_player_physical_fields.down,
+    name: '20261030_061238_add_player_physical_fields'
   },
 ];

@@ -215,8 +215,23 @@ export interface Player {
   slug?: string | null;
   number: number;
   position?: ('PG' | 'SG' | 'SF' | 'PF' | 'C') | null;
+  /**
+   * 身高，单位 cm，如 188
+   */
+  height?: number | null;
+  /**
+   * 体重，单位 kg，如 82
+   */
+  weight?: number | null;
+  /**
+   * 座右铭，一句话
+   */
+  motto?: string | null;
   portrait?: (number | null) | Media;
   avatar?: (number | null) | Media;
+  /**
+   * 球员介绍，展示在详情页
+   */
   bio?: string | null;
   status: 'draft' | 'published';
   featured?: boolean | null;
@@ -424,6 +439,9 @@ export interface PlayersSelect<T extends boolean = true> {
   slug?: T;
   number?: T;
   position?: T;
+  height?: T;
+  weight?: T;
+  motto?: T;
   portrait?: T;
   avatar?: T;
   bio?: T;
