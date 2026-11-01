@@ -13,7 +13,7 @@ type Props = { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: Props) {
   const { player } = (await getPlayer((await params).slug)) ?? {}
   if (!player) return {}
-  const meta = [player.englishName, player.position].filter(Boolean).join(' / ')
+  const meta = [player.englishName, player.position?.join('/')].filter(Boolean).join(' / ')
   return buildMetadata({
     title: `${player.name} #${player.number}`,
     description:
@@ -29,7 +29,7 @@ export default async function PlayerPage({ params }: Props) {
   if (!result) notFound()
   const { player, albums } = result
   const portrait = mediaUrl(player.portrait, 'card')
-  const meta = [player.englishName, player.position].filter(Boolean).join(' / ')
+  const meta = [player.englishName, player.position?.join('/')].filter(Boolean).join(' / ')
   const stats = [
     player.height ? `${player.height} CM` : null,
     player.weight ? `${player.weight} KG` : null,

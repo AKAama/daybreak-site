@@ -214,7 +214,7 @@ export interface Player {
    */
   slug?: string | null;
   number: number;
-  position?: ('PG' | 'SG' | 'SF' | 'PF' | 'C') | null;
+  position?: ('PG' | 'SG' | 'SF' | 'PF' | 'C')[] | null;
   /**
    * 身高，单位 cm，如 188
    */

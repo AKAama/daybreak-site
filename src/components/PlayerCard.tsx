@@ -44,7 +44,8 @@ export function PlayerCard({
         <div className="display text-[42px] leading-none text-paper">#{player.number}</div>
         <h3 className="mt-1 text-[22px] font-black leading-tight">{player.name}</h3>
         <p className="mt-1 text-xs font-bold text-blaze">
-          {[player.englishName, player.position].filter(Boolean).join(' · ') || 'DAYBREAK CREW'}
+          {[player.englishName, player.position?.join('/')].filter(Boolean).join(' · ') ||
+            'DAYBREAK CREW'}
         </p>
       </div>
     </Link>

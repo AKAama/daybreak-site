@@ -96,7 +96,7 @@ for (const [i, r] of roster.entries()) {
       name: r.name,
       englishName: r.en,
       number: r.num,
-      position: r.pos,
+      position: [r.pos],
       portrait,
       bio: `南京街头篮球爱好者，${r.pos}，主战场：下马坊与玄武湖野球场。`,
       // 最后一名留草稿，用来验证前台与 REST 的发布过滤

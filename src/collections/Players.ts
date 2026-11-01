@@ -41,6 +41,7 @@ export const Players: CollectionConfig = {
     {
       name: 'position',
       type: 'select',
+      hasMany: true,
       options: ['PG', 'SG', 'SF', 'PF', 'C'].map((value) => ({ label: value, value })),
     },
     {
