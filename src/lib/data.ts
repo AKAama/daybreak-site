@@ -5,12 +5,17 @@ import type { Album, Homepage, Media, Player, SiteSetting } from '../payload-typ
 import type { AlbumPhotoView, AlbumView, HomepageView, PlayerView, SettingsView } from './types'
 
 const PUBLISHED: Where = { status: { equals: 'published' } }
-const publishedWhere = (slug: string): Where => ({ and: [{ slug: { equals: slug } }, PUBLISHED] })
+// 先按 slug 查；纯数字参数同时按 ID 兜底，兼容 slugOf 生成的 /gallery/2 这类旧链接
+const publishedWhere = (slug: string): Where => {
+  const byKey: Where[] = [{ slug: { equals: slug } }]
+  if (/^\d+$/.test(slug)) byKey.push({ id: { equals: Number(slug) } })
+  return { and: [{ or: byKey }, PUBLISHED] }
+}
 
 const asDoc = <T>(value: unknown): T | null => (value && typeof value === 'object' ? (value as T) : null)
 const asDocs = <T>(value: unknown): T[] =>
   Array.isArray(value) ? (value.filter((item) => typeof item === 'object') as T[]) : []
-// 已发布文档的 slug 由集合钩子保证存在，这里只是把「非空」写进类型
+// slug 由集合钩子保证存在；万一缺失用 ID，与 publishedWhere 的 ID 兜底对应
 const slugOf = (slug: string | null | undefined, id: number) => slug || String(id)
 
 const toPlayer = (doc: Player): PlayerView => ({

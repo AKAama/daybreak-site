@@ -2,6 +2,9 @@ import type { CollectionConfig } from 'payload'
 import { APIError } from 'payload'
 import { onlyAdmin, readPublished } from '../lib/access'
 import { dateSlug, slugify } from '../lib/slug'
+import { slugHooks } from '../lib/slugHooks'
+
+const slug = slugHooks('albums', 'album', (d) => slugify(d.title as string) || dateSlug(d.eventDate as string))
 
 const pick = (data: Record<string, unknown>, originalDoc: Record<string, unknown>, key: string) =>
   key in data ? data[key] : originalDoc?.[key]
@@ -20,14 +23,9 @@ export const Albums: CollectionConfig = {
     delete: onlyAdmin,
   },
   hooks: {
-    // 纯中文标题转不出 ASCII slug，退回按活动日期命名；两者都没有时前台用文档 ID 兜底
-    beforeValidate: [
-      ({ data, originalDoc }) => {
-        if (data?.slug || originalDoc?.slug) return data
-        const slug = slugify(data?.title) || dateSlug(data?.eventDate)
-        return slug ? { ...data, slug } : data
-      },
-    ],
+    // 纯中文标题转不出 ASCII slug，退回活动日期，再退回 album-<id>
+    beforeValidate: [slug.beforeValidate],
+    afterChange: [slug.afterChange],
     // PRD 5.1 选定「空相册不允许发布」，前台因此不需要空相册分支
     beforeChange: [
       ({ data, originalDoc }) => {
@@ -48,7 +46,7 @@ export const Albums: CollectionConfig = {
       type: 'text',
       unique: true,
       index: true,
-      admin: { description: '留空时按标题英文/数字生成，取不到则用活动日期' },
+      admin: { description: '留空时按标题英文/数字生成，取不到则用活动日期，再取不到则为 album-<ID>' },
     },
     { name: 'eventDate', type: 'date' },
     { name: 'description', type: 'textarea' },

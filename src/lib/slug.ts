@@ -14,3 +14,6 @@ export const dateSlug = (iso: string | null | undefined) => {
   const matched = /^\d{4}-\d{2}-\d{2}/.exec((iso || '').trim())
   return matched ? matched[0] : ''
 }
+
+/** 标题取不出 ASCII 时的最终兜底：album-12 / player-3，ID 天然唯一 */
+export const idSlug = (prefix: string, id: number | string) => `${prefix}-${id}`
