@@ -1,0 +1,116 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: crpi-3xux8vqn35fw00z9.cn-shanghai.personal.cr.aliyuncs.com
+  IMAGE_NAME: project_hub/daybreak-site
+  DEPLOY_HOST: 101.43.122.127
+  DEPLOY_USER: root
+  DEPLOY_PATH: /opt/daybreak-site
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Image tags
+        id: meta
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          SHORT_SHA="${GITHUB_SHA::7}"
+          TAG="${VERSION}-${SHORT_SHA}"
+          IMAGE="${REGISTRY}/${IMAGE_NAME}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
+          echo "full=${IMAGE}:${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Aliyun Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.ALIYUN_CR_USERNAME }}
+          password: ${{ secrets.ALIYUN_CR_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.full }}
+            ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          FULL_IMAGE: ${{ steps.meta.outputs.full }}
+        run: |
+          set -euo pipefail
+          install -m 600 /dev/null /tmp/deploy_key
+          printf '%s\n' "$SSH_KEY" > /tmp/deploy_key
+          # Accept host key once
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh -i /tmp/deploy_key -o IdentitiesOnly=yes \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "FULL_IMAGE='${FULL_IMAGE}' DEPLOY_PATH='${DEPLOY_PATH}' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$DEPLOY_PATH"
+          test -f docker-compose.yml
+          test -f .env
+          # Point compose at the new tag without rewriting unrelated fields
+          if grep -q 'DAYBREAK_IMAGE' docker-compose.yml; then
+            :
+          else
+            # One-time migrate: replace hard-coded image line with env default
+            python3 - <<'PY'
+          import pathlib,re
+          p=pathlib.Path('docker-compose.yml')
+          t=p.read_text()
+          t2=re.sub(
+            r'(^\s*image:\s*).+$',
+            r'\1${DAYBREAK_IMAGE:-crpi-3xux8vqn35fw00z9.cn-shanghai.personal.cr.aliyuncs.com/project_hub/daybreak-site:0.1.4-1ca2b68}',
+            t, count=1, flags=re.M)
+          if t==t2:
+            raise SystemExit('could not patch image line in docker-compose.yml')
+          p.write_text(t2)
+          print('compose image line migrated to DAYBREAK_IMAGE')
+          PY
+          fi
+          export DAYBREAK_IMAGE="$FULL_IMAGE"
+          # Persist the tag for manual update.sh / next boots
+          printf '%s\n' "DAYBREAK_IMAGE=${FULL_IMAGE}" > .image.env
+          docker pull "$FULL_IMAGE"
+          docker compose --env-file .env --env-file .image.env up -d --force-recreate --no-deps web
+          docker compose --env-file .env --env-file .image.env ps
+          # Brief health wait
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null -w '%{http_code}' http://127.0.0.1:3004/ | grep -qE '200|301|302'; then
+              echo "health ok"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "WARN: container up but local HTTP check did not return 2xx/3xx yet"
+          docker compose --env-file .env --env-file .image.env logs --tail=80 web || true
+          exit 0
+          REMOTE
+          rm -f /tmp/deploy_key

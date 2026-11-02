@@ -49,6 +49,30 @@ PAYLOAD_SECRET=... POSTGRES_PASSWORD=... NEXT_PUBLIC_SITE_URL=https://your-domai
 - 反代需要转发 `/admin` 与 `/api`，并配置 HTTPS。登录接口的频率限制交给反代（如 Caddy `rate_limit`），
   应用层未自行实现。
 
+## 自动部署（GitHub Actions）
+
+推送到 `main`（或手动跑 Actions 里的 **Build and deploy**）会：
+
+1. 在 GitHub-hosted runner 上构建 `linux/amd64` 镜像（避免腾讯云 4G 内存不够跑 `next build`）
+2. 推到阿里云个人版容器镜像服务：`crpi-3xux8vqn35fw00z9.cn-shanghai.personal.cr.aliyuncs.com/project_hub/daybreak-site:<package.json version>-<shortsha>`，并更新 `latest`
+3. SSH 到生产机 `/opt/daybreak-site`，`docker pull` 后只重建 `web`（`.env`、Postgres、RustFS/S3、媒体卷不动）
+
+需要在仓库 Settings → Secrets and variables → Actions 配置：
+
+| Secret | 说明 |
+|--------|------|
+| `ALIYUN_CR_USERNAME` | 阿里云 ACR「访问凭证」用户名 |
+| `ALIYUN_CR_PASSWORD` | ACR Registry 专用密码 |
+| `DEPLOY_SSH_KEY` | 可登录生产机的私钥（已建议使用专用部署密钥） |
+
+生产机 compose 通过 `DAYBREAK_IMAGE`（写入 `.image.env`）指定镜像标签；手工更新可：
+
+```bash
+cd /opt/daybreak-site
+DAYBREAK_IMAGE=crpi-.../daybreak-site:<tag> bash -c 'printf "DAYBREAK_IMAGE=%s\n" "$DAYBREAK_IMAGE" > .image.env && docker pull "$DAYBREAK_IMAGE" && docker compose --env-file .env --env-file .image.env up -d --force-recreate --no-deps web'
+```
+
+
 ## 数据模型
 
 | 名称 | 说明 |
